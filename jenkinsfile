@@ -1,4 +1,4 @@
-node('hifive_unleashed'){
+node{
     stage('*** Phase 1 ***') {
         //Using bash commands
         sh '''#!/bin/bash
