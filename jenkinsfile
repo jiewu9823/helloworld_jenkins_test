@@ -1,8 +1,8 @@
-node{
+node('hifive_unleashed'){
     stage('*** Phase 1 ***') {
         //Using bash commands
         sh '''#!/bin/bash
-            echo "Hello World 11111 !\n"
+            echo "Hello World !\n"
          '''
     }
 }
