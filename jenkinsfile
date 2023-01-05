@@ -1,8 +1,31 @@
-node('hifive_unleashed'){
-    stage('*** Phase 1 ***') {
-        //Using bash commands
-        sh '''#!/bin/bash
-            echo "Hello World !\n"
-         '''
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Repository') {
+            steps('delegate'){
+                    checkout scm //Clones the repository on the local machine
+            }
+        }
+        stage ('Compilation Phase'){
+            steps{
+                    sh '''#!/bin/bash
+                        gcc -g ./helloworld.c -o helloworld.out
+                    '''
+                    sh '''#!/bin/bash
+                        riscv64-unknown-elf-gcc ./helloworld.c -o helloworld_riscv_compiled.out
+                    '''
+            }
+        }
+        stage ('Running Binaries'){
+            steps {
+                    sh ''' #!/bin/bash
+                        ./helloworld.out
+                    '''
+                    sh'''#!/bin/bash
+                        spike $(which pk) helloworld_riscv_compiled.out
+                    '''
+            }
+        }
     }
 }
