@@ -1,8 +1,14 @@
-node('hifive_unleashed'){
-    stage('*** Phase 1 ***') {
-        //Using bash commands
+node("hifive_unleashed"){
+    checkout scm //Getting content of this repo
+    stage('*** Compilation Phase ***') { // for display purposes
+        //Compiling helloworld.c using bash commands
         sh '''#!/bin/bash
-            echo "Hello World !\n"
+            gcc -g ./helloworld.c -o helloworld.out
+         '''
+    }
+    stage (' *** Running Binaries ***'){
+        sh '''#!/bin/bash
+            ./helloworld.out
          '''
     }
 }
