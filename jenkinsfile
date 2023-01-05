@@ -1,31 +1,14 @@
-pipeline {
-    agent any
-
-    stages {
-        stage('Clone Repository') {
-            steps('delegate'){
-                    checkout scm //Clones the repository on the local machine
-            }
-        }
-        stage ('Compilation Phase'){
-            steps{
-                    sh '''#!/bin/bash
-                        gcc -g ./helloworld.c -o helloworld.out
-                    '''
-                    sh '''#!/bin/bash
-                        riscv64-unknown-elf-gcc ./helloworld.c -o helloworld_riscv_compiled.out
-                    '''
-            }
-        }
-        stage ('Running Binaries'){
-            steps {
-                    sh ''' #!/bin/bash
-                        ./helloworld.out
-                    '''
-                    sh'''#!/bin/bash
-                        spike $(which pk) helloworld_riscv_compiled.out
-                    '''
-            }
-        }
+node("hifive_unleashed"){
+    checkout scm //Getting content of this repo
+    stage('*** Compilation Phase ***') { // for display purposes
+        //Compiling helloworld.c using bash commands
+        sh '''#!/bin/bash
+            gcc -g ./helloworld.c -o helloworld.out
+         '''
+    }
+    stage (' *** Running Binaries ***'){
+        sh '''#!/bin/bash
+            ./helloworld.out
+         '''
     }
 }
