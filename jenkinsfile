@@ -1,0 +1,41 @@
+node ("x86_runner1"){
+    stage('Cleanup'){
+		sh'''#!/bin/bash
+			rm -rf $HOME/ci_test--jiewu
+		'''
+        cleanWs()
+    }
+    stage('60s Sleep'){
+        sleep(time:60, unit:'SECONDS')
+    }
+    stage('Checkout x86'){
+        checkout scm
+    }
+    stage('install dependency'){
+        sh'''
+            pip install -r requirements
+        '''
+    }
+    stage ('run add'){
+        sh'''#!/bin/bash
+            path=`pwd`
+            file_path1=$path/getweb.py
+            res1=`python3 $file_path1`
+            echo $res1
+            if(($res==200))
+            then
+              file_path2=$path/add.py
+              res2=`python3 $file_path2`
+              echo $res2
+            else
+              echo "failed"
+              exit 8     
+        '''
+    }
+    stage('Cleanup'){
+		sh'''#!/bin/bash
+			rm -rf $HOME/ci_test--jiewu
+		'''
+        cleanWs()
+    }
+}
