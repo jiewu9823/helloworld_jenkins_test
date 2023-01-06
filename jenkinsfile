@@ -13,6 +13,7 @@ node ("x86_runner1"){
     }
     stage('install dependency'){
         sh'''
+            apt install python3-pip
             pip3 install -r requirements
         '''
     }
