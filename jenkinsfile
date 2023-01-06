@@ -1,35 +1,47 @@
-node ("x86_runner1"){
-    stage('Cleanup'){
-		sh'''#!/bin/bash
-			rm -rf $HOME/ci_test--jiewu
-		'''
-        cleanWs()
+node("x86_runner1"){
+    checkout scm //Getting content of this repo
+    stage('*** Compilation Phase ***') { // for display purposes
+        //Compiling helloworld.c using bash commands
+        sh '''#!/bin/bash
+            gcc -g ./helloworld.c -o helloworld.out
+            riscv64-unknown-linux-gnu-gcc ./helloworld.c -o helloworld_riscv_compiled.out
+         '''
     }
-    stage('60s Sleep'){
-        sleep(time:60, unit:'SECONDS')
+    stage (' *** Running Binaries ***'){
+        sh '''#!/bin/bash
+            ./helloworld.out
+            qemu-riscv64 -L $RISCV_SYSROOT ./helloworld_riscv_compiled.out
+         '''
     }
-    stage('Checkout x86'){
-        checkout scm
+    stage ('*** Gitlab Status Update ***'){
+        updateGitlabCommitStatus name: 'build', state: 'success'
     }
-    stage ('run add'){
-        sh'''#!/bin/bash
-            python3 "getresult.py"
-            res1=$?
-            echo $res1
-            if[$res1==0];then
-              python3 "add.py"
-              res2=$?
-              echo $res2
-            else
-              echo "failed"
-              exit 8 
-            fi    
-        '''
+}
+node('hifive_unleashed'){
+    checkout scm //Getting content of this repo
+    stage('*** Compilation Phase ***') { // for display purposes
+        //Compiling helloworld.c using bash commands
+        sh '''#!/bin/bash
+            gcc -g ./helloworld.c -o helloworld.out
+         '''
     }
-    stage('Cleanup'){
-		sh'''#!/bin/bash
-			rm -rf $HOME/ci_test--jiewu
-		'''
-        cleanWs()
+    stage (' *** Running Binaries ***'){
+        sh '''#!/bin/bash
+            ./helloworld.out
+         ''' 
+    } 
+}
+node('riscv64_runner1'){
+    checkout scm //Getting content of this repo
+    stage('*** Compilation Phase ***') { // for display purposes
+        //Compiling helloworld.c using bash commands
+        sh '''#!/bin/bash
+            gcc -g ./helloworld.c -o helloworld.out
+         '''
     }
+    stage (' *** Running Binaries ***'){
+        sh '''#!/bin/bash
+            ./helloworld.out
+         ''' 
+    } 
 }
