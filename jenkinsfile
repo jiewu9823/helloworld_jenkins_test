@@ -1,16 +1,19 @@
-node('x86_runner1'){
+node("x86_runner1"){
     checkout scm //Getting content of this repo
     stage('*** Compilation Phase ***') { // for display purposes
         //Compiling helloworld.c using bash commands
         sh '''#!/bin/bash
             gcc -g ./helloworld.c -o helloworld.out
-            riscv64-unknown-elf-gcc ./helloworld.c -o helloworld_riscv_compiled.out
+            riscv64-unknown-linux-gnu-gcc ./helloworld.c -o helloworld_riscv_compiled.out
          '''
     }
     stage (' *** Running Binaries ***'){
         sh '''#!/bin/bash
             ./helloworld.out
-            spike $(which pk) helloworld_riscv_compiled.out
+            qemu-riscv64 -L $RISCV_SYSROOT ./helloworld_riscv_compiled.out
          '''
+    }
+    stage ('*** Gitlab Status Update ***'){
+        updateGitlabCommitStatus name: 'build', state: 'success'
     }
 }
