@@ -13,18 +13,17 @@ node ("x86_runner1"){
     }
     stage ('run add'){
         sh'''#!/bin/bash
-            path=`pwd`
-            file_path1=$path/getresult.py
-            res1=`python $file_path1`
+            python3 "getresult.py"
+            res1=$?
             echo $res1
-            if(($res==0))
-            then
-              file_path2=$path/add.py
-              res2=`python $file_path2`
+            if[$res1==0];then
+              python3 "add.py"
+              res2=$?
               echo $res2
             else
               echo "failed"
-              exit 8     
+              exit 8 
+            fi    
         '''
     }
     stage('Cleanup'){
