@@ -1,4 +1,4 @@
-node('x86_runner2'){
+node('x86_runner1'){
     checkout scm //Getting content of this repo
     stage('*** Compilation Phase ***') { // for display purposes
         //Compiling helloworld.c using bash commands
