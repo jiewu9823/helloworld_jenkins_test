@@ -23,6 +23,7 @@ node('hifive_unleashed'){
         //Compiling helloworld.c using bash commands
         sh '''#!/bin/bash
             gcc -g ./helloworld.c -o helloworld.out
+            exit 8
          '''
     }
     stage (' *** Running Binaries ***'){
