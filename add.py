@@ -9,5 +9,5 @@ def add(x,y):
 if __name__=="__main__":
     x = parameters.x
     y = parameters.y
-    add(total)
+    add(x,y)
 
