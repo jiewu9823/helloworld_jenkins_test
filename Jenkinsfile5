@@ -1,0 +1,33 @@
+node("visionfive"){
+    stage('*** Cleanup ***'){
+        cleanWs()
+    }
+     stage('*** Check out SCM ***') {
+        checkout scm
+    }
+    stage('*** Prepare Compilation Environment ***') {
+         sh '''#!/bin/bash
+            docker run -itd --privileged -v $HOME/workspace/helloworld:/home --name riscv64_ubuntu riscv64/ubuntu:latest
+            docker ps
+            docker exec -i riscv64_ubuntu /bin/bash -c "pwd"
+            docker exec -i riscv64_ubuntu /bin/bash -c "cd /home && ls"
+            docker exec -i riscv64_ubuntu /bin/bash -c "apt update && apt install -y gcc"
+         '''
+    }
+    stage('*** Compilation Phase ***') { 
+        sh '''#!/bin/bash
+            docker exec -i riscv64_ubuntu /bin/bash -c "cd /home/helloworld && gcc -g ./helloworld.c -o helloworld.out"
+         '''
+    }
+    stage (' *** Running Binaries ***'){
+        sh '''#!/bin/bash
+            docker exec -i riscv64_ubuntu /bin/bash -c "cd /home/helloworld && ./helloworld.out"
+         '''
+    }
+    stage('*** Cleanup ***'){
+        sh '''#!/bin/bash
+            docker stop riscv64_ubuntu
+            docker rm riscv64_ubuntu
+         '''
+    }
+}

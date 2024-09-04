@@ -1,0 +1,1 @@
+docker run -it --privileged --restart=always --name riscv64_ubuntu riscv64/ubuntu /bin/bash

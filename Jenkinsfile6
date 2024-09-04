@@ -1,0 +1,29 @@
+node("sg2042"){
+    stage('*** Cleanup ***'){
+        cleanWs()
+    }
+    def ubuntu = docker.image('riscv64/ubuntu:latest')
+    ubuntu.pull()
+    ubuntu.inside {
+        stage (' *** Prepare Environment ***'){
+            sh '''#!/bin/bash
+                apt update
+                apt install -y gcc git
+            '''
+        }
+        stage('*** Check out SCM ***') {
+            checkout scm
+        }
+        stage('*** Compilation Phase ***') { 
+            sh '''#!/bin/bash
+                gcc -g ./helloworld.c -o helloworld.out
+            '''
+        }
+        stage (' *** Running Binaries ***'){
+            sh '''#!/bin/bash
+                ./helloworld.out
+            '''
+        }
+    }
+}
+

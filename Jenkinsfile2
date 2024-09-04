@@ -1,0 +1,48 @@
+pipeline {
+    agent { 
+        // label 'sg2042' 
+        docker { 
+            label 'sg2042'
+            image 'riscv64/ubuntu:latest'
+        }
+    }
+    stages {
+        stage ('Cleanup'){
+            steps{
+                cleanWs()
+            }  
+        }
+        stage('Clone Repository') {
+            // agent {
+            //     docker { image 'riscv64/ubuntu:latest' }
+            // }
+            steps{
+                checkout scm
+            }
+        }
+        stage ('Compilation Phase'){
+            // agent {
+            //     docker { image 'riscv64/ubuntu:latest' }
+            // }
+            steps{
+                sh '''#!/bin/bash
+                    pwd
+                    ls
+                    gcc -g ./helloworld.c -o helloworld.out
+                '''
+            }
+        }
+        stage ('Running Binaries'){
+            // agent {
+            //     docker { image 'riscv64/ubuntu:latest' }
+            // }
+            steps{
+                sh '''#!/bin/bash
+                    pwd
+                    ls
+                    ./helloworld.out
+                '''
+            }
+        }
+    }
+}
